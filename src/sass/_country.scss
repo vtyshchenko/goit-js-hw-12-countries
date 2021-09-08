@@ -1,0 +1,25 @@
+.country {
+  &-name {
+    text-align: center;
+    font-size: 40px;
+    width: 400px;
+  }
+
+  &-label {
+    font-weight: 700;
+  }
+
+  &-text {
+    font-weight: 400;
+    margin-left: 20px;
+    margin-right: 40px;
+  }
+
+  &-info {
+    display: flex;
+  }
+
+  &-list {
+    margin-left: 20px;
+  }
+}

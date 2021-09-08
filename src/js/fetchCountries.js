@@ -1,4 +1,8 @@
 export default function fetchCountries(searchQuery) {
+  if (searchQuery.length === 0) {
+    return;
+  }
+
   const url = `https://restcountries.eu/rest/v2/name/${searchQuery}`;
   const myRequest = new Request(url);
 
