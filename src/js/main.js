@@ -34,6 +34,9 @@ function onInput(event) {
         });
       } else {
         if (!data) {
+          if (data === undefined) {
+            return;
+          }
           info({
             text: 'Nothing found!',
           });
