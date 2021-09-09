@@ -7,6 +7,9 @@ import { defaults } from '@pnotify/core';
 const PNotifyFontAwesome5Fix = require('@pnotify/font-awesome5-fix');
 const PNotifyFontAwesome5 = require('@pnotify/font-awesome5');
 
+import countryCardTempl from '../templates/country.hbs';
+import countryListTempl from '../templates/countryList.hbs';
+
 defaultModules.set(PNotifyDesktop, {});
 defaultModules.set(PNotifyFontAwesome5Fix, {});
 defaultModules.set(PNotifyFontAwesome5, {});
@@ -54,39 +57,8 @@ function onInput(event) {
 
 function createMarcup(data) {
   if (data.length > 1) {
-    return (
-      `<ul  class="country-list">` +
-      data
-        .map(infoCountry => {
-          return `<li>${infoCountry.name}</li>`;
-        })
-        .join('') +
-      `</ul>`
-    );
+    return countryListTempl(data);
   } else {
-    const { name, capital, population, languages, flag } = data[0];
-
-    const languagesList = languages
-      .map(language => {
-        return `<li>${language.name}</li>`;
-      })
-      .join('');
-
-    return `
-      <h1 class="country-name">${name}</h1>
-      <div class="country-info">
-        <div class="country-text">
-          <p><span class="country-label">Capital:</span> ${capital}</p>
-          <p><span class="country-label">Population:</span> ${population}</p>
-          <p><span class="country-label">Languages:</span></p>
-          <ul>
-            ${languagesList}
-          </ul>
-        </div>
-        <div>
-          <img src="${flag}" alt="flag of ${name}" width="200px" />
-        </div>
-      </div>
-      `;
+    return countryCardTempl(data[0]);
   }
 }
