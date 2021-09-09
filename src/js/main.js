@@ -2,25 +2,21 @@ import ref from './ref.js';
 import fetchCountries from './fetchCountries.js';
 import { info, error, defaultModules } from '../../node_modules/@pnotify/core/dist/PNotify.js';
 import * as PNotifyDesktop from '@pnotify/desktop';
-
 import { defaults } from '@pnotify/core';
-const PNotifyFontAwesome5Fix = require('@pnotify/font-awesome5-fix');
-const PNotifyFontAwesome5 = require('@pnotify/font-awesome5');
-
 import countryCardTempl from '../templates/country.hbs';
 import countryListTempl from '../templates/countryList.hbs';
 
+const PNotifyFontAwesome5Fix = require('@pnotify/font-awesome5-fix');
+const PNotifyFontAwesome5 = require('@pnotify/font-awesome5');
 defaultModules.set(PNotifyDesktop, {});
 defaultModules.set(PNotifyFontAwesome5Fix, {});
 defaultModules.set(PNotifyFontAwesome5, {});
-
 defaults.delay = 2000;
 defaults.styling = 'material';
 defaults.mode = 'light';
+
 let debounce = require('lodash.debounce');
-
 const { countryFilterRef, countryInfoRef } = ref;
-
 countryFilterRef.addEventListener('input', debounce(onInput, 500));
 
 function onInput(event) {
@@ -42,9 +38,7 @@ function onInput(event) {
             text: 'Nothing found!',
           });
         } else {
-          countryInfoRef.textContent = '';
-          const markup = createMarcup(data);
-          countryInfoRef.insertAdjacentHTML('beforeend', markup);
+          countryInfoRef.innerHTML = createMarcup(data);
         }
       }
     })
