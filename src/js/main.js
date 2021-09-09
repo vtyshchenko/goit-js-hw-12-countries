@@ -22,25 +22,16 @@ countryFilterRef.addEventListener('input', debounce(onInput, 500));
 function onInput(event) {
   const promiseFetchCountry = fetchCountries(event.target.value);
 
-  if (promiseFetchCountry === undefined) {
-    return;
-  }
-
   promiseFetchCountry
     .then(data => {
+      console.log('data', data);
       if (data && data.length > 10) {
         info({
           text: 'Too many matches found. Please enter a more specific query!',
         });
       } else {
-        if (!data) {
-          if (data === undefined) {
-            return;
-          }
-          info({
-            text: 'Nothing found!',
-          });
-        } else {
+        countryInfoRef.innerHTML = '';
+        if (data) {
           countryInfoRef.innerHTML = createMarcup(data);
         }
       }

@@ -1,3 +1,5 @@
+import { info, error } from '../../node_modules/@pnotify/core/dist/PNotify.js';
+
 export default async function fetchCountries(searchQuery) {
   if (searchQuery.length === 0) {
     return;
@@ -8,12 +10,19 @@ export default async function fetchCountries(searchQuery) {
 
   try {
     const response = await fetch(myRequest);
+
     if (response.status === 200) {
       return response.json();
     } else {
-      throw new Error('Something went wrong on api server!');
+      if (response.status === 404) {
+        info({
+          text: 'Nothing found!',
+        });
+      } else {
+        throw new Error(`Something went wrong on api server! Response status ${response.status}`);
+      }
     }
-  } catch (error) {
-    console.log(`Something went wrong: ${error}!`);
+  } catch (err) {
+    error({ text: `Something went wrong: ${err}!` });
   }
 }
