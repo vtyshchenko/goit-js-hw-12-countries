@@ -13,12 +13,11 @@ const createMarcup = new CreateMarcup(countryFilterRef, countryInfoRef);
 countryFilterRef.addEventListener('input', debounce(onInput, 500));
 
 function onInput(event) {
-  countries
-    .fetchCountries(event.target.value)
-    .then(data => {
-      createMarcup.renderMarkup(data);
-    })
-    .catch(countries.onError);
+  countries.fetchCountries(event.target.value).then(renderMarkup).catch(countries.onError);
+}
+
+function renderMarkup(data) {
+  createMarcup.renderMarkup(data);
 }
 
 function setNotifySettings() {

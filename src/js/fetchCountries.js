@@ -8,24 +8,7 @@ async function fetchCountries(searchQuery) {
   const url = `https://restcountries.eu/rest/v2/name/${searchQuery}`;
   const myRequest = new Request(url);
 
-  return await fetch(myRequest)
-    .then(response => {
-      // console.log(response);
-      // res = getDataFromResponse(response);
-      // console.log(`~ res`, res);
-      switch (response.status) {
-        case 200:
-          return response.json();
-        case 404:
-          info({
-            text: 'Nothing found!',
-          });
-          break;
-        default:
-          throw new Error(`Something went wrong on api server! Response status ${response.status}`);
-      }
-    })
-    .catch(onError);
+  return await fetch(myRequest).then(getDataFromResponse).catch(onError);
 }
 
 function getDataFromResponse(response) {
@@ -36,7 +19,7 @@ function getDataFromResponse(response) {
       info({
         text: 'Nothing found!',
       });
-      break;
+      return Promise.resolve('');
     default:
       throw new Error(`Something went wrong on api server! Response status ${response.status}`);
   }

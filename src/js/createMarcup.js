@@ -8,13 +8,13 @@ class CreateMarcup {
     this.countryInfoRef = countryInfoRef;
   }
 
-  renderMarkup(data) {
+  renderMarkup(response) {
     this.countryInfoRef.innerHTML = '';
-    if (data) {
-      if (data.length > 10) {
+    if (response) {
+      if (response.length > 10) {
         this.onManyValues();
       } else {
-        this.countryInfoRef.innerHTML = this.createMarcup(data);
+        this.countryInfoRef.innerHTML = this.createMarcup(response);
       }
     }
   }
