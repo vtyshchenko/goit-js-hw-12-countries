@@ -1,46 +1,24 @@
-import { error, defaults } from '@pnotify/core';
+import { defaults } from '@pnotify/core';
 
 import getRefs from './refs.js';
 import countries from './fetchCountries';
-
-import countryCardTempl from '../templates/country.hbs';
-import countryListTempl from '../templates/countryList.hbs';
+import CreateMarcup from './createMarcup';
 
 setNotifySettings();
 
 let debounce = require('lodash.debounce');
 const { countryFilterRef, countryInfoRef } = getRefs();
+const createMarcup = new CreateMarcup(countryFilterRef, countryInfoRef);
 
 countryFilterRef.addEventListener('input', debounce(onInput, 500));
 
 function onInput(event) {
-  countries.fetchCountries(event.target.value).then(renderMarkup).catch(countries.onError);
-}
-
-function renderMarkup(data) {
-  countryInfoRef.innerHTML = '';
-  if (data) {
-    if (data.length > 10) {
-      onManyValues();
-    } else {
-      countryInfoRef.innerHTML = createMarcup(data);
-    }
-  }
-}
-
-function onManyValues() {
-  error({
-    text: 'Too many matches found. Please enter a more specific query!',
-  });
-}
-
-function createMarcup(data) {
-  if (data.length > 1) {
-    return countryListTempl(data);
-  } else {
-    countryFilterRef.value = '';
-    return countryCardTempl(data[0]);
-  }
+  countries
+    .fetchCountries(event.target.value)
+    .then(data => {
+      createMarcup.renderMarkup(data);
+    })
+    .catch(countries.onError);
 }
 
 function setNotifySettings() {
