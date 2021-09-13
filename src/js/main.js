@@ -1,31 +1,43 @@
-import { info, error, defaultModules } from '../../node_modules/@pnotify/core/dist/PNotify.js';
-import * as PNotifyDesktop from '@pnotify/desktop';
-import { defaults, Stack } from '@pnotify/core';
+import { info, error, defaults, Stack } from '@pnotify/core';
 
 import ref from './ref.js';
 import fetchCountries from './fetchCountries.js';
 import countryCardTempl from '../templates/country.hbs';
 import countryListTempl from '../templates/countryList.hbs';
 
-// const PNotifyFontAwesome5Fix = require('@pnotify/font-awesome5-fix');
-// const PNotifyFontAwesome5 = require('@pnotify/font-awesome5');
-defaultModules.set(PNotifyDesktop, {});
-// defaultModules.set(PNotifyFontAwesome5Fix, {});
-// defaultModules.set(PNotifyFontAwesome5, {});
-defaults.delay = 8000;
-defaults.styling = 'material';
-defaults.stack.dir1 = 'down';
-defaults.stack.dir2 = 'left';
-// defaults.mode = 'light';
-console.log(defaults);
-const myStack = new Stack({ dir1: 'down', firstpos1: 25 });
+defaults.delay = 2000;
+defaults.stack.dir1 = 'up';
+defaults.stack.dir2 = 'right';
+defaults.mode = 'light';
+defaults.firstpos1 = 25;
+defaults.firstpos2 = 25;
+defaults.spacing1 = 36;
+defaults.spacing2 = 36;
+defaults.push = 'bottom';
+defaults.context = document.body;
+defaults.positioned = true;
+
+let myStack = new Stack({
+  dir1: 'up',
+  dir2: 'right',
+  firstpos1: 25,
+  firstpos2: 25,
+  spacing1: 36,
+  spacing2: 36,
+  push: 'bottom',
+  context: document.body,
+});
 
 let debounce = require('lodash.debounce');
 const { countryFilterRef, countryInfoRef } = ref;
 countryFilterRef.addEventListener('input', debounce(onInput, 500));
+// const body = document.getElementsByTagName('body');
 
 function onInput(event) {
   const promiseFetchCountry = fetchCountries(event.target.value);
+  // const notif = new Notification('test', {
+  //   body: 'body',
+  // });
 
   promiseFetchCountry
     .then(response => {
@@ -37,8 +49,9 @@ function onInput(event) {
         return response.json();
       } else {
         if (response.status === 404) {
-          error({
+          info({
             text: 'Nothing found!',
+            stack: myStack,
           });
         } else {
           throw new Error(`Something went wrong on api server! Response status ${response.status}`);
@@ -48,8 +61,9 @@ function onInput(event) {
     .then(data => {
       countryInfoRef.innerHTML = '';
       if (data && data.length > 10) {
-        info({
+        error({
           text: 'Too many matches found. Please enter a more specific query!',
+          stack: myStack,
         });
       } else {
         if (data) {
@@ -60,6 +74,7 @@ function onInput(event) {
     .catch(err => {
       error({
         text: `Something went wrong: ${err}!`,
+        stack: myStack,
       });
     });
 }
