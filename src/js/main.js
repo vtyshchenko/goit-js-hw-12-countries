@@ -1,7 +1,8 @@
-import { info, error, defaults, Stack } from '@pnotify/core';
+import { error, defaults } from '@pnotify/core';
 
-import ref from './ref.js';
-import fetchCountries from './fetchCountries.js';
+import getRefs from './refs.js';
+import countries from './fetchCountries';
+
 import countryCardTempl from '../templates/country.hbs';
 import countryListTempl from '../templates/countryList.hbs';
 
@@ -17,72 +18,40 @@ defaults.push = 'bottom';
 defaults.context = document.body;
 defaults.positioned = true;
 
-let myStack = new Stack({
-  dir1: 'up',
-  dir2: 'right',
-  firstpos1: 25,
-  firstpos2: 25,
-  spacing1: 36,
-  spacing2: 36,
-  push: 'bottom',
-  context: document.body,
-});
-
 let debounce = require('lodash.debounce');
-const { countryFilterRef, countryInfoRef } = ref;
+const { countryFilterRef, countryInfoRef } = getRefs();
+
 countryFilterRef.addEventListener('input', debounce(onInput, 500));
-// const body = document.getElementsByTagName('body');
 
 function onInput(event) {
-  const promiseFetchCountry = fetchCountries(event.target.value);
-  // const notif = new Notification('test', {
-  //   body: 'body',
-  // });
-
-  promiseFetchCountry
-    .then(response => {
-      if (response === undefined) {
-        return;
-      }
-
-      if (response.status === 200) {
-        return response.json();
-      } else {
-        if (response.status === 404) {
-          info({
-            text: 'Nothing found!',
-            stack: myStack,
-          });
-        } else {
-          throw new Error(`Something went wrong on api server! Response status ${response.status}`);
-        }
-      }
-    })
-    .then(data => {
-      countryInfoRef.innerHTML = '';
-      if (data && data.length > 10) {
-        error({
-          text: 'Too many matches found. Please enter a more specific query!',
-          stack: myStack,
-        });
-      } else {
-        if (data) {
-          countryInfoRef.innerHTML = createMarcup(data);
-        }
-      }
-    })
+  countries
+    .fetchCountries(event.target.value)
+    .then(renderMarkup)
     .catch(err => {
       error({
         text: `Something went wrong: ${err}!`,
-        stack: myStack,
       });
     });
+}
+
+function renderMarkup(data) {
+  countryInfoRef.innerHTML = '';
+  if (data) {
+    if (data.length > 10) {
+      error({
+        text: 'Too many matches found. Please enter a more specific query!',
+      });
+    } else {
+      countryInfoRef.innerHTML = createMarcup(data);
+    }
+  }
 }
 
 function createMarcup(data) {
   if (data.length > 1) {
     return countryListTempl(data);
   } else {
+    countryFilterRef.value = '';
     return countryCardTempl(data[0]);
   }
 }
