@@ -2,35 +2,31 @@ import { error, info } from '../../node_modules/@pnotify/core/dist/PNotify.js';
 
 async function fetchCountries(searchQuery) {
   if (searchQuery.length === 0) {
-    return;
+    return Promise.resolve('');
   }
 
   const url = `https://restcountries.eu/rest/v2/name/${searchQuery}`;
   const myRequest = new Request(url);
 
-  try {
-    return await fetch(myRequest).then(response => {
-      console.log('then');
-      if (response === undefined) {
-        return;
-      }
+  return await fetch(myRequest).then(getDataFromResponse).catch(onError);
+}
 
-      if (response.status === 200) {
-        return response.json();
-      } else {
-        if (response.status === 404) {
-          info({
-            text: 'Nothing found!',
-          });
-        } else {
-          throw new Error(`Something went wrong on api server! Response status ${response.status}`);
-        }
-      }
-    });
-  } catch (err) {
-    console.log('catch');
-    error({ text: `Something went wrong: ${err}!` });
+function getDataFromResponse(response) {
+  switch (response.status) {
+    case 200:
+      return response.json();
+    case 404:
+      info({
+        text: 'Nothing found!',
+      });
+      break;
+    default:
+      throw new Error(`Something went wrong on api server! Response status ${response.status}`);
   }
 }
 
-export default { fetchCountries };
+function onError(err) {
+  error({ text: `Something went wrong: ${err}!` });
+}
+
+export default { fetchCountries, onError };
