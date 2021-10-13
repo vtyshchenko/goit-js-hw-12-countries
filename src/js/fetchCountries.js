@@ -5,13 +5,15 @@ async function fetchCountries(searchQuery) {
     return Promise.resolve('');
   }
 
-  const url = `https://restcountries.eu/rest/v2/name/${searchQuery}`;
+  const url = `https://restcountries.eu/rest/v3.1/name/${searchQuery}`;
+  // const url = `https://api.countrylayer.com/v2/name/${searchQuery}?access_key=f61446b35f19f84d9901785111fced18`;
   const myRequest = new Request(url);
 
   return await fetch(myRequest).then(getDataFromResponse).catch(onError);
 }
 
 function getDataFromResponse(response) {
+  console.log(`object Response status ${response.status}`);
   switch (response.status) {
     case 200:
       return response.json();
