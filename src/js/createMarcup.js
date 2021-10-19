@@ -21,6 +21,7 @@ class CreateMarcup {
 
   createMarcup(data) {
     if (data.length > 1) {
+      console.log(data);
       return countryListTempl(data);
     } else {
       this.countryFilterRef.value = '';

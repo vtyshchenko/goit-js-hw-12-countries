@@ -5,7 +5,8 @@ async function fetchCountries(searchQuery) {
     return Promise.resolve('');
   }
 
-  const url = `https://restcountries.eu/rest/v3.1/name/${searchQuery}`;
+  // const url = `https://restcountries.eu/v2/name/${searchQuery}`;
+  const url = `https://restcountries.com/v3.1/name/${searchQuery}`;
   // const url = `https://api.countrylayer.com/v2/name/${searchQuery}?access_key=f61446b35f19f84d9901785111fced18`;
   const myRequest = new Request(url);
 
